@@ -112,7 +112,6 @@ class Tracker:
 
 
         allMonthsData[monthYearString][day] = value
-        print(allMonthsData)
 
         with open(FILE_NAME, "w") as f:
             json.dump(allMonthsData, f, indent=4)

@@ -5,12 +5,12 @@ from datetime import datetime
 from colorama import Fore, Style, init
 init(autoreset=True)
 
-ALLOWED_VALUES = ["no", "yes", "sick", "cancel"]
-FILE_NAME = "trackedData.json"
-ALLOW_ONE_SET = False
+ALLOWED_VALUES: list = ["no", "yes", "sick", "cancel"]
+FILE_NAME: str = "trackedData.json"
+ALLOW_ONE_SET: bool = False
 
 class Tracker:
-    def __init__(self, name, daysToTrack):
+    def __init__(self, name: str, daysToTrack: list):
         self.name = name
         self.daysToTrack = daysToTrack
 
@@ -52,7 +52,7 @@ class Tracker:
 
         print(f"Added data for {key} to 'trackedData.json'.")
 
-    def getData(self, month, year):
+    def getData(self, month: str, year: str) -> list:
         monthYearString = f"{month}.{year}"
         if not os.path.exists(FILE_NAME):
             print(f"File '{FILE_NAME}' does not exist.")
@@ -73,8 +73,9 @@ class Tracker:
         for monthYear in allMonthsData:
             if monthYear == monthYearString:
                 return [[month, year], allMonthsData[monthYear]]
+        return []
 
-    def setData(self, onlyOneSet, month, year, day, value):
+    def setData(self, onlyOneSet: bool, month: str, year: str, day: str, value: str) -> None:
         day = str(day)
         month = str(month)
         year = str(year)
@@ -116,12 +117,12 @@ class Tracker:
         with open(FILE_NAME, "w") as f:
             json.dump(allMonthsData, f, indent=4)
 
-    def formatData(self, month, year):
+    def formatData(self, month: str, year: str):
         currentMonthData = self.getData(month, year)
 
         meta, dayData = currentMonthData
-        metaMonth = int(meta[0])
-        metaYear = int(meta[1])
+        metaMonth: int = int(meta[0])
+        metaYear: int = int(meta[1])
 
         today = datetime.today()
         isCurrentMonth = (today.month == metaMonth and today.year == metaYear)
@@ -168,11 +169,11 @@ class Tracker:
         print(f"\nCompletion: {Fore.CYAN}{percentage:.1f}%{Style.RESET_ALL}  ->  {Fore.CYAN}{completedCount} / {totalDays}")
 
 
-def run(mode, tracker, params: list = []):
+def run(mode: str, tracker: Tracker, params: list[str] = []):
     today = datetime.today()
-    year = today.year
-    month = today.month
-    day = today.day
+    year: str = str(today.year)
+    month: str = str(today.month)
+    day: str = str(today.day)
 
 
     match mode:
@@ -184,5 +185,7 @@ def run(mode, tracker, params: list = []):
 
 if __name__ == "__main__":
     tracker = Tracker(name="tracker", daysToTrack=[0, 1, 2, 3, 4, 5])
+    while True:
+        run(input("Enter Mode -> "), tracker, [input("-> ")])
     #run("set", tracker, ["yes"])
     run("show", tracker)

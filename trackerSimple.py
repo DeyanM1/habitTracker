@@ -182,8 +182,11 @@ def formatData(targetDateKey: str) -> None:
     setAlready = "notCurrentMonth"
     if isCurrentMonth:
         setAlready = "Set"
-        if dayData[str(currentDay)].lower() == "none":
-            setAlready = "notSet"
+        try:
+            if dayData[str(currentDay)].lower() == "none":
+                setAlready = "notSet"
+        except Exception as e:
+            setAlready = "cantSet"
 
 
     # Mapping values to colors
@@ -196,6 +199,7 @@ def formatData(targetDateKey: str) -> None:
         "break": Fore.YELLOW + "BREAK" + Style.RESET_ALL,
         "notSet": Fore.RED + "Value not set yet!" + Style.RESET_ALL,
         "Set": Fore.GREEN  + "Value set today!" + Style.RESET_ALL,
+        "cantSet": Fore.YELLOW + "Value cant be set Today!" + Style.RESET_ALL,
         "notCurrentMonth": Fore.WHITE + "Not current Month!" + Style.RESET_ALL,
     }
 

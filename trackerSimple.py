@@ -88,7 +88,13 @@ def setData(targetDateKey: str, value: str) -> None:
         print("Only one set activated! Set already used!")
         return
 
-    allMonthsData[targetDateKey].update({str(currentDay): value})
+    if currentDay in allMonthsData[targetDateKey]:
+        allMonthsData[targetDateKey][str(currentDay)] = value
+    else:
+        print("Value cant be set today, today is not a tracked day")
+        return
+
+    # allMonthsData[targetDateKey].update({str(currentDay): value})
 
     with open(TRACK_FILE_NAME, "w") as f:
         json.dump(allMonthsData, f, indent=4)

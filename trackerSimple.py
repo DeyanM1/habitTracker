@@ -8,7 +8,7 @@ init(autoreset=True)
 ALLOWED_VALUES: list[str] = ["no", "yes", "sick", "cancel", "break"]
 TRACK_FILE_NAME = "trackedDataSimple.json"
 DAYS_TO_TRACK = [0, 1, 2, 3, 4, 5]
-ONE_PER_DAY = False
+ONE_PER_DAY = True 
 VERBOSE = False
 
 
@@ -74,6 +74,9 @@ def setData(targetDateKey: str, value: str) -> None:
 
     if targetDateKey == "t":
         targetDateKey = f"{currentMonth}.{currentYear}"
+        targetDay = currentDay
+    else:
+        targetDay, targetDateKey = targetDateKey.split(".", 1)
 
 
     if value not in ALLOWED_VALUES:
@@ -84,11 +87,12 @@ def setData(targetDateKey: str, value: str) -> None:
     with open(TRACK_FILE_NAME, "r") as f:
         allMonthsData = json.load(f)
 
-    if ONE_PER_DAY and targetDateKey == f"{currentMonth}.{currentYear}" and allMonthsData[targetDateKey] != "none":
+    if ONE_PER_DAY and targetDateKey == f"{currentMonth}.{currentYear}" and targetDay == currentDay and allMonthsData[targetDateKey][str(targetDay)] != "none":
         print("Only one set activated! Set already used!")
         return
+
     if str(currentDay) in allMonthsData[targetDateKey]:
-        allMonthsData[targetDateKey][str(currentDay)] = value
+        allMonthsData[targetDateKey][str(targetDay)] = value
     else:
         print("Value cant be set today, today is not a tracked day")
         return
@@ -190,7 +194,7 @@ def formatData(targetDateKey: str) -> None:
         try:
             if dayData[str(currentDay)].lower() == "none":
                 setAlready = "notSet"
-        except Exception as e:
+        except Exception:
             setAlready = "cantSet"
 
 
@@ -279,7 +283,8 @@ def selector(function: str):
     colorMap = {
         "y": Fore.GREEN + "Y" + Style.RESET_ALL,
         "n": Fore.RED + "n" + Style.RESET_ALL,
-        "MM": Fore.RED + "MM" + Style.RESET_ALL,
+        "D": Fore.RED+ "D" + Style.RESET_ALL,
+        "M": Fore.RED + "M" + Style.RESET_ALL,
         "YYYY": Fore.RED + "YYYY" + Style.RESET_ALL,
         "t": Fore.BLUE + "t" + Style.RESET_ALL,
         "today": Fore.BLUE + "today" + Style.RESET_ALL,
@@ -297,7 +302,7 @@ def selector(function: str):
 
     match function:
         case "set":
-            print(f"Date format: '{colorMap.get("MM")}.{colorMap.get("YYYY")}' or '{colorMap.get("t")}' » {colorMap.get("today")}")
+            print(f"Date format: '{colorMap.get("D")}.{colorMap.get("M")}.{colorMap.get("YYYY")}' or '{colorMap.get("t")}' » {colorMap.get("today")}")
             targetDateKey = input("->> ")
 
             #print("Values: no | yes | sick | break | cancel")
@@ -306,12 +311,12 @@ def selector(function: str):
             setData(targetDateKey, value)
 
         case "show":
-            print(f"Date format: '{colorMap.get("MM")}.{colorMap.get("YYYY")}' or '{colorMap.get("t")}' » {colorMap.get("today")}")
+            print(f"Date format: '{colorMap.get("M")}.{colorMap.get("YYYY")}' or '{colorMap.get("t")}' » {colorMap.get("today")}")
             targetDateKey = input("->> ")
             formatData(targetDateKey)
 
         case "remove":
-            print(f"Date format: '{colorMap.get("MM")}.{colorMap.get("YYYY")}' or '{colorMap.get("t")}' » {colorMap.get("today")}")
+            print(f"Date format: '{colorMap.get("M")}.{colorMap.get("YYYY")}' or '{colorMap.get("t")}' » {colorMap.get("today")}")
             targetDateKey = input("->> ")
 
             value = input(f"Are you sure? ({colorMap.get("y")}/{colorMap.get("n")}) -> ")

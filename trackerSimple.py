@@ -87,8 +87,7 @@ def setData(targetDateKey: str, value: str) -> None:
     if ONE_PER_DAY and targetDateKey == f"{currentMonth}.{currentYear}" and allMonthsData[targetDateKey] != "none":
         print("Only one set activated! Set already used!")
         return
-
-    if currentDay in allMonthsData[targetDateKey]:
+    if str(currentDay) in allMonthsData[targetDateKey]:
         allMonthsData[targetDateKey][str(currentDay)] = value
     else:
         print("Value cant be set today, today is not a tracked day")
